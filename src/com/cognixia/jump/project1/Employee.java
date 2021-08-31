@@ -1,14 +1,17 @@
 package com.cognixia.jump.project1;
 
-public class Employee {
+import java.io.Serializable;
+
+public class Employee implements Serializable{
+	
+	private static final long serialVersionUID = 4822919L;
 	
 	public String firstName, lastName, email, position;
-	public static String department;
-	int id, yearlySalary; //first number of id is their department number
+	public static Department department;
+	int id; //first number of id is their department number
 	
-	//TODO: Use Enums 
 	public static enum Department {
-		FIRSTN, LASTN, EMAIL, POSITION, DEPARTMENT;
+		MARKETING, TECHNOLOGY, OPERATIONS, MAINTENANCE, OTHER;
 	}
 	
 	
@@ -24,7 +27,35 @@ public class Employee {
 		setDepartment(id);
 		
 	}
+	
+	//To add an employee by ID 
+	public Employee(int id) {
+		setDepartment(id);
+	}
 
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		
+		// Use a try catch to check if ID already exists 
+//		try {
+//			
+//		}
+//		catch()
+		this.id = id;
+		
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -56,7 +87,7 @@ public class Employee {
 	}
 
 
-	public String getDepartment() {
+	public Department getDepartment() {
 		
 		return department;
 	}
@@ -67,7 +98,7 @@ public class Employee {
 	 * @return department of employee 
 	 * 
 	 */
-	public static String setDepartment(int id) {
+	public static void setDepartment(int id) {
 		int key = 0;
 		while(id != 0) {
 			key = id % 10; 
@@ -76,30 +107,34 @@ public class Employee {
 		
 		switch(key) {
 			case 1: 
-				department = "Board Member";
+				department = Department.MARKETING; 
 				break;
 			case 2: 
-				department = "Marketing";
+				department = Department.OPERATIONS;
 				break;
 			case 3: 
-				department = "Finance";
+				department = Department.TECHNOLOGY;
 				break;
 			case 4: 
-				department = "Human Resources";
-				break;
-			case 5: 
-				department = "Technology";
-				break;
-			case 6: 
-				department = "Maintenance";
+				department = Department.MAINTENANCE;
 				break;
 			default:
-				department = "Other";
+				department = Department.OTHER;
 				break;
 		}
 		
-		return department;
 	}
-	
 
+	@Override
+	public String toString() {
+		return "Employee Information\n"
+				+ "Identification Number:" + id
+				+ "First Name:" + firstName
+				+ "Last Name:" + lastName
+				+ "Email:" + email
+				+ "Position:" + position
+				+ "Department:" + department.toString();
+	}
+
+	
 }
