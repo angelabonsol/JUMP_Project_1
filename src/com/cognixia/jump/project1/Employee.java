@@ -30,6 +30,7 @@ public class Employee implements Serializable{
 	
 	//To add an employee by ID 
 	public Employee(int id) {
+		this.id = id;
 		setDepartment(id);
 	}
 
@@ -128,12 +129,21 @@ public class Employee implements Serializable{
 	@Override
 	public String toString() {
 		return "Employee Information\n"
-				+ "Identification Number:" + id
-				+ "First Name:" + firstName
-				+ "Last Name:" + lastName
-				+ "Email:" + email
-				+ "Position:" + position
-				+ "Department:" + department.toString();
+				+ "Identification Number:" + id + "\n"
+				+ "First Name:" + firstName + "\n"
+				+ "Last Name:" + lastName + "\n"
+				+ "Email:" + email + "\n"
+				+ "Position:" + position + "\n"
+				+ "Department:" + department.toString() + "\n";
+	}
+	
+	public String fileFormat() {
+		return id + " " + firstName + " " + lastName + " "
+				+ email + " " + position + " " + department.toString();
+	}
+	
+	public String preview() {
+		return id + "   " + firstName + " " + lastName;
 	}
 
 	
