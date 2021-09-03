@@ -119,13 +119,6 @@ public class EmployeeRunner {
 				exit();
 				break;
 
-				// ***TODO: To be deleted *** 
-			case 6: 
-				System.out.println("Enter ID:");
-				id = scanner.nextInt();
-				System.out.println(IDExistence(id));
-				break;
-
 			default: 
 				throw new InputMismatchException();
 
