@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
@@ -55,14 +54,12 @@ public class EmployeeRunner {
 			while((line = reader.readLine()) != null) {
 				String[] tokens = line.split(" ");
 				Employee emp = new Employee(Integer.parseInt(tokens[0]), tokens[1], tokens[2], tokens[3], tokens[4]);
-				
+
 				eList.add(emp);
 			}
 
 		} catch(FileNotFoundException e){
 			System.out.println("This file does not exist!");
-		} catch(NullPointerException e){
-			e.printStackTrace();
 		} catch(IOException e) {
 			System.out.println("Could not read character!");
 		} finally {
@@ -121,8 +118,8 @@ public class EmployeeRunner {
 			case 5:
 				exit();
 				break;
-			
-			// *** To be deleted *** 
+
+				// ***TODO: To be deleted *** 
 			case 6: 
 				System.out.println("Enter ID:");
 				id = scanner.nextInt();
@@ -160,10 +157,6 @@ public class EmployeeRunner {
 		}
 
 	}
-	
-	private static void write(PrintWriter printer,String str) {
-		printer.println(str);
-	}
 
 	/**
 	 * Prints full Employee list 
@@ -175,7 +168,7 @@ public class EmployeeRunner {
 			System.out.println(emp.preview());
 		}
 		System.out.println("\n");
-		
+
 	}
 
 	/**
@@ -207,18 +200,18 @@ public class EmployeeRunner {
 		String yn;
 		boolean repeat = true;
 		Employee emp = new Employee(id);
-		
+
 		File file = null;
 		FileWriter fileWriter = null;
 		BufferedWriter buffWriter = null;
 		PrintWriter printWriter = null;
-		
+
 		try {
 			file = new File("resources/employees.txt");
-			fileWriter = new FileWriter(file);
+			fileWriter = new FileWriter(file, true);
 			buffWriter = new BufferedWriter(fileWriter);
 			printWriter = new PrintWriter(buffWriter, true);
-			
+
 			if(IDExistence(id) == true) {
 				throw new IDDoesExistException();
 			}
@@ -261,15 +254,14 @@ public class EmployeeRunner {
 				emp.setPosition(position);
 
 				employees.add(emp);
-//				printWriter.println(emp.fileFormat());
-				write(printWriter, emp.fileFormat());
+				printWriter.println(emp.fileFormat());
 
 			} 
 
 		} catch(InputMismatchException e) {
 			System.out.println("Please enter y or n only! ");
 			addEmployee(id);
-			
+
 		} catch (IOException e) {
 			System.out.println("File Does Not Exist!");
 		} finally {
@@ -280,7 +272,7 @@ public class EmployeeRunner {
 					e.printStackTrace();
 				}
 			}
-			
+
 			if (fileWriter != null) {
 				try {
 					fileWriter.close();
@@ -288,7 +280,7 @@ public class EmployeeRunner {
 					e.printStackTrace();
 				}
 			}
-			
+
 			if (printWriter != null) {
 				printWriter.close();
 			}
@@ -300,17 +292,105 @@ public class EmployeeRunner {
 	 * Deletes Employee from array list and file
 	 * @param id
 	 * @throws IDDoesNotExistException
+	 * @throws IOException, FileNotFoundException 
+	 * @throws NumberFormatException 
 	 */
-	private static void deleteEmployee(int id) throws IDDoesNotExistException{
-		
-		if(IDExistence(id) == true) {
-			//TODO: Delete Employee Object here 
-			
-			
+	private static void deleteEmployee(int id) throws IDDoesNotExistException, NumberFormatException, IOException, FileNotFoundException{
+
+		File file = null;
+		File temp = null;
+		FileReader fileReader = null; 
+		BufferedReader reader = null;
+		FileWriter fileWriter = null;
+		BufferedWriter buffWriter = null;
+		PrintWriter writer = null;
+
+		try {
+
+			if(IDExistence(id) == true) {
+				file = new File("resources/employees.txt");
+				temp = File.createTempFile("tmp", "");
+
+				fileReader = new FileReader(file);
+				reader = new BufferedReader(fileReader);
+				fileWriter = new FileWriter(temp, true);
+				buffWriter = new BufferedWriter(fileWriter);
+				writer = new PrintWriter(buffWriter, true);
+
+				String line;
+
+				while((line = reader.readLine()) != null) {
+
+					String[] tokens = line.split(" ");
+
+					if(Integer.parseInt(tokens[0]) == id) {
+
+						for (Employee emp : employees) {
+							if(emp.getId() == id) {
+								employees.remove(employees.indexOf(emp));
+								System.out.println("Employee " + emp.getId() 
+									+ " " + emp.getFirstName() 
+									+ " " + emp.getLastName()
+									+ " " +  " has been deleted!\n");
+								break;
+							}
+						}
+
+					}
+					else {
+						writer.println(line);
+					}
+
+				}
+
+				File oldFile = file;
+				if (oldFile.delete())
+					temp.renameTo(oldFile);
+			}
+			else {
+				throw new IDDoesNotExistException();
+			}
+
+		} catch(FileNotFoundException e){
+			System.out.println("This file does not exist!");
+		} catch(IOException e) {
+			System.out.println("Could not read character!");
+		} catch(NullPointerException e) {
+
+		} catch(IDDoesNotExistException e) {
+
 		}
-		else {
-			throw new IDDoesNotExistException();
-		}
+		finally {
+			try {
+				fileReader.close();
+				reader.close();
+
+				if (buffWriter != null) {
+					try {
+						buffWriter.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (fileWriter != null) {
+					try {
+						fileWriter.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (writer != null) {
+					writer.close();
+				}
+
+			} catch(IOException e) {
+				System.out.println("Could not close reader/writer objects!");
+			} catch(NullPointerException e) {
+
+			}
+		}	
 
 	}
 
